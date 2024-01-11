@@ -4,6 +4,10 @@ project("HeffteExamples" VERSION @PROJECT_VERSION@ LANGUAGES CXX)
 
 find_package(Heffte @PROJECT_VERSION@ REQUIRED PATHS "@CMAKE_INSTALL_PREFIX@")
 
+if (NOT Heffte_ENABLE_MPI)
+    message(FATAL_ERROR "MPI disabled within heFFTe, we have no non-MPI examples")
+endif()
+
 if (Heffte_FFTW_FOUND)
     add_executable(heffte_example_fftw heffte_example_fftw.cpp)
     target_link_libraries(heffte_example_fftw Heffte::Heffte)

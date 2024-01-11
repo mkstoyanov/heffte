@@ -1,4 +1,8 @@
 
+if (NOT Heffte_ENABLE_MPI)
+    return()
+endif()
+
 add_executable(heffte_example_r2r heffte_example_r2r.cpp)
 target_link_libraries(heffte_example_r2r Heffte)
 

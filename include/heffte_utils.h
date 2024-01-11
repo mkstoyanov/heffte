@@ -22,9 +22,12 @@
 #include <string>
 #include <deque>
 #include <fstream>
-#include <mpi.h>
 
 #include "heffte_config.h"
+
+#ifdef Heffte_ENABLE_MPI
+#include <mpi.h>
+#endif
 
 namespace heffte {
 
@@ -49,6 +52,7 @@ T c11_exchange(T& obj, U&& new_value)
  * which helps preserve const-correctness and simplifies variable initialization.
  */
 
+#ifdef Heffte_ENABLE_MPI
 /*!
  * \ingroup hefftempi
  * \brief Wrappers to miscellaneous MPI methods giving a more C++-ish interface.
@@ -219,6 +223,7 @@ template<> inline MPI_Datatype type_from<std::complex<float>>(){ return MPI_C_CO
 template<> inline MPI_Datatype type_from<std::complex<double>>(){ return MPI_C_DOUBLE_COMPLEX; }
 
 }
+#endif
 
 /*!
  * \ingroup fft3d

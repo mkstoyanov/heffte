@@ -9,6 +9,8 @@
 
 #include "heffte_fft3d.h"
 
+#ifdef Heffte_ENABLE_MPI
+
 namespace heffte {
 
 /*!
@@ -402,5 +404,7 @@ fft3d_r2c<backend_tag, index> make_fft3d_r2c(box3d<index> const inbox, box3d<ind
 }
 
 }
+
+#endif // Heffte_ENABLE_MPI
 
 #endif

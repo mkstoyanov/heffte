@@ -39,6 +39,7 @@ namespace gpu { using namespace oneapi; }
 #endif
 #endif
 
+#ifdef Heffte_ENABLE_MPI
 /*!
  * \ingroup hefftereshape
  * \brief Generates an unpack plan where the boxes and the destination do not have the same order.
@@ -554,6 +555,7 @@ std::unique_ptr<reshape3d_base<index>> make_reshape3d(typename backend::device_i
         }
     }
 }
+#endif // Heffte_ENABLE_MPI
 
 }
 

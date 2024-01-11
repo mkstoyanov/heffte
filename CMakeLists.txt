@@ -12,6 +12,8 @@ option(Heffte_ENABLE_DOXYGEN  "Build the Doxygen documentation"    OFF)
 option(Heffte_ENABLE_AVX      "Enable the use of AVX registers in the stock backend, adds flags: -mfma -mavx"       OFF)
 option(Heffte_ENABLE_AVX512   "Enable the use of AVX512 registers in the stock backend, adds AVX flags plus: -mavx512f -mavx512dq"    OFF)
 
+option(Heffte_ENABLE_MPI      "Enable the distributed algorithms within heFFTe" ON)
+
 option(Heffte_ENABLE_MAGMA    "Enable some helper functions from UTK MAGMA for GPU backends"   OFF)
 
 option(Heffte_ENABLE_PYTHON   "Configure the Python scripts"     OFF)
@@ -37,6 +39,7 @@ set(Heffte_langs "CXX")
 if (CMAKE_C_COMPILER)
     enable_language(C)
     set(Heffte_langs "${Heffte_langs} C")
+    set(Heffte_ENABLE_C)
 endif()
 if (Heffte_ENABLE_FORTRAN)
     enable_language(Fortran)
@@ -88,15 +91,11 @@ endif()
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/heffte_config.cmake.h"
                "${CMAKE_CURRENT_BINARY_DIR}/include/heffte_config.h")
 
-# find common dependencies
-find_package(MPI REQUIRED) # always a dependency
-
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 # libheffte source files list (does not include the cuda kernels)
 add_library(Heffte
     include/heffte.h
-    include/heffte_c.h
     include/heffte_utils.h
     include/heffte_trace.h
     include/heffte_geometry.h
@@ -115,11 +114,12 @@ add_library(Heffte
     include/stock_fft/heffte_stock_complex.h
     include/stock_fft/heffte_stock_tree.h
     include/stock_fft/heffte_stock_vec_types.h
-    src/heffte_c.cpp
     src/heffte_plan_logic.cpp
     src/heffte_magma_helpers.cpp
     src/heffte_reshape3d.cpp
     src/heffte_compute_transform.cpp
+    $<$<BOOL:${Heffte_ENABLE_C}>:src/heffte_c.hpp>
+    $<$<BOOL:${Heffte_ENABLE_C}>:src/heffte_c.cpp>
     $<$<BOOL:${Heffte_ENABLE_CUDA}>:include/heffte_backend_cuda.h>
     $<$<BOOL:${Heffte_ENABLE_CUDA}>:src/heffte_backend_cuda.cu>
     $<$<BOOL:${Heffte_ENABLE_ROCM}>:include/heffte_backend_rocm.h>
@@ -129,7 +129,10 @@ add_library(Heffte
     )
 
 # handle other dependencies
-target_link_libraries(Heffte MPI::MPI_CXX)
+if (Heffte_ENABLE_MPI)
+    find_package(MPI REQUIRED)
+    target_link_libraries(Heffte MPI::MPI_CXX)
+endif()
 
 if (Heffte_ENABLE_FFTW)
     find_package(HeffteFFTW REQUIRED)
@@ -298,7 +301,7 @@ if (Heffte_ENABLE_TESTING)
     add_subdirectory(examples)
     add_subdirectory(test)
 endif()
-if (${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
+if (NOT ${CMAKE_PROJECT_NAME} STREQUAL ${PROJECT_NAME})
     if (CUDA_INCLUDE_DIRS)
         # cuda_add_library() apparently adds the includes as private
         target_include_directories(Heffte PUBLIC ${CUDA_INCLUDE_DIRS})

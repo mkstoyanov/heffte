@@ -17,6 +17,8 @@
  * and creates the corresponding plan for reshape and 1-D FFT operations.
  */
 
+#ifdef Heffte_ENABLE_MPI
+
 namespace heffte {
 
 /*!
@@ -325,5 +327,7 @@ template<typename index>
 std::vector<std::array<int, 3>> compute_grids(logic_plan3d<index> const &plan);
 
 }
+
+#endif // Heffte_ENABLE_MPI
 
 #endif

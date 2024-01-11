@@ -19,6 +19,7 @@ struct custom_complex{
 template<> struct heffte::is_ccomplex<custom_complex<float>> : std::true_type{};
 template<> struct heffte::is_zcomplex<custom_complex<double>> : std::true_type{};
 
+#ifdef Heffte_ENABLE_MPI
 /*
  * This can never run, it is supposed to test the types on compile time.
  */
@@ -52,11 +53,14 @@ void test_types(){
     fftr.backward(dcomplex.data(), doubles.data());
     fftr.backward(dcomplex.data(), doubles.data(), dcomplex.data());
 }
+#endif
 
 int main(int, char**){
 
     std::cerr << " DO NOT RUN THIS CODE \n";
     std::cerr << " THIS IS A COMPILE TEST ONLY \n";
+
+#ifdef Heffte_ENABLE_MPI
 
     test_types<heffte::backend::stock>();
     #ifdef Heffte_ENABLE_FFTW
@@ -74,6 +78,8 @@ int main(int, char**){
     #ifdef Heffte_ENABLE_ONEAPI
     test_types<heffte::backend::onemkl>();
     #endif
+
+#endif
 
     return 0;
 }

@@ -9,6 +9,8 @@
 
 #include "heffte_reshape3d.h"
 
+#ifdef Heffte_ENABLE_MPI
+
 namespace heffte {
 
     /*!
@@ -103,5 +105,7 @@ namespace heffte {
                         std::array<executor_base*, 3> const &executor, direction);
 
 }
+
+#endif // Heffte_ENABLE_MPI
 
 #endif // HEFFTE_COMPUTE_TRANSFORM_H

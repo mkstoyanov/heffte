@@ -146,6 +146,7 @@ enum class scale{
     symmetric
 };
 
+#ifdef Heffte_ENABLE_MPI
 /*!
  * \ingroup fft3d
  * \brief Defines the plan for a 3-dimensional discrete Fourier transform performed on a MPI distributed data.
@@ -760,6 +761,8 @@ fft3d<backend_tag, index> make_fft3d(box3d<index> const inbox, box3d<index> cons
                   "the backend_tag is not valid, perhaps it needs to be enabled in the build system");
     return fft3d<backend_tag, index>(inbox, outbox, comm, options);
 }
+
+#endif // Heffte_ENABLE_MPI
 
 }
 

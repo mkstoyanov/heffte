@@ -13,6 +13,8 @@
 
 #define Heffte_GIT_HASH "@Heffte_GIT_HASH@"
 
+#cmakedefine Heffte_ENABLE_MPI
+
 #cmakedefine Heffte_ENABLE_AVX
 #cmakedefine Heffte_ENABLE_AVX512
 

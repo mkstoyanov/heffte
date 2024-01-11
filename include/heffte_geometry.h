@@ -191,12 +191,14 @@ struct rank_remap{
         map = std::vector<int>(all_ranks, -1);
         for(int i=0; i<sub_ranks; i++) map[i] = i;
     }
+#ifdef Heffte_ENABLE_MPI
     //! \brief Build the map when using user provided sub-communicator.
     void set_subranks(MPI_Comm global, MPI_Comm subcomm){
         int subcomm_rank = (subcomm == MPI_COMM_NULL) ? -1 : mpi::comm_rank(subcomm);
         map = std::vector<int>(mpi::comm_size(global));
         MPI_Allgather(&subcomm_rank, 1, MPI_INT, map.data(), 1, MPI_INT, global);
     }
+#endif
     //! \brief The number of ranks in the sub-comm.
     int size_subcomm;
     //! \brief Indicates whether the remap is empty.
@@ -679,6 +681,7 @@ inline std::array<int, 3> proc_setup_min_surface(box3d<index> const world, int n
     return {static_cast<int>(best_grid[0]), static_cast<int>(best_grid[1]), static_cast<int>(best_grid[2])};
 }
 
+#ifdef Heffte_ENABLE_MPI
 namespace mpi {
 /*!
  * \ingroup hefftempi
@@ -707,8 +710,8 @@ inline ioboxes<index> gather_boxes(box3d<index> const my_inbox, box3d<index> con
 }
 
 }
+#endif // Heffte_ENABLE_MPI
 
 }
-
 
 #endif /* HEFFTE_GEOMETRY_H */

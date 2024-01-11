@@ -33,6 +33,16 @@
 
 using namespace heffte;
 
+#ifndef Heffte_ENABLE_MPI
+using MPI_Comm = int;
+namespace mpi {
+    int comm_rank(MPI_Comm){ return 0; }
+}
+constexpr int MPI_COMM_WORLD = 0;
+constexpr int MPI_COMM_NULL = -1;
+inline void MPI_Barrier(MPI_Comm){}
+#endif
+
 using std::cout;
 using std::cerr;
 using std::endl;
@@ -53,7 +63,7 @@ struct using_nompi{};
 template<typename mpi_tag = using_mpi>
 struct all_tests{
     all_tests(char const *cname) : name(cname), separator(pad_all, '-'){
-        if (std::is_same<mpi_tag, using_nompi>::value or heffte::mpi::comm_rank(MPI_COMM_WORLD) == 0){
+        if (std::is_same<mpi_tag, using_nompi>::value or mpi::comm_rank(MPI_COMM_WORLD) == 0){
             int const pad = pad_all / 2 + name.size() / 2;
             cout << "\n" << separator << "\n";
             cout << setw(pad) << name << "\n";
@@ -61,7 +71,7 @@ struct all_tests{
         }
     }
     ~all_tests(){
-        if (std::is_same<mpi_tag, using_nompi>::value or heffte::mpi::comm_rank(MPI_COMM_WORLD) == 0){
+        if (std::is_same<mpi_tag, using_nompi>::value or mpi::comm_rank(MPI_COMM_WORLD) == 0){
             int const pad = pad_all / 2 + name.size() / 2 + 3;
             cout << "\n" << separator << "\n";
             cout << setw(pad) << name  + "  " + ((heffte_all_tests) ? "pass" : "fail") << "\n";
@@ -80,11 +90,13 @@ template<> std::string get_variant<std::complex<double>>(){ return "zcomplex"; }
 
 struct using_alltoall{};
 struct using_pointtopoint{};
+#ifdef Heffte_ENABLE_MPI
 template<reshape_algorithm variant> std::string get_description(){ return ""; }
 template<> std::string get_description<reshape_algorithm::alltoallv>(){ return "heffte::reshape3d_alltoallv"; }
 template<> std::string get_description<reshape_algorithm::alltoall>(){ return "heffte::reshape3d_alltoall"; }
 template<> std::string get_description<reshape_algorithm::p2p>(){ return "heffte::reshape3d_pointtopoint"; }
 template<> std::string get_description<reshape_algorithm::p2p_plined>(){ return "heffte::reshape3d_p2p (plined)"; }
+#endif
 
 template<typename scalar_variant = int, typename mpi_tag = using_mpi, typename backend_tag = void>
 struct current_test{
@@ -100,7 +112,7 @@ struct current_test{
         heffte_test_pass = true;
     };
     ~current_test(){
-        if (std::is_same<mpi_tag, using_nompi>::value or heffte::mpi::comm_rank(MPI_COMM_WORLD) == 0){
+        if (std::is_same<mpi_tag, using_nompi>::value or mpi::comm_rank(MPI_COMM_WORLD) == 0){
             cout << setw(pad_type)  << get_variant<scalar_variant>();
             if (std::is_same<backend_tag, void>::value){
                 cout << setw(pad_large) << heffte_test_name;

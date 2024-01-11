@@ -33,6 +33,8 @@ namespace heffte {
 #endif
 
 
+#ifdef Heffte_ENABLE_MPI
+
 /*!
  * \brief Counts how many boxes from the list have a non-empty intersection with the reference box.
  */
@@ -816,6 +818,8 @@ heffte_instantiate_reshape3d(tag::cpu, long long)
 #ifdef Heffte_ENABLE_GPU
 heffte_instantiate_reshape3d(tag::gpu, int)
 heffte_instantiate_reshape3d(tag::gpu, long long)
+#endif
+
 #endif
 
 

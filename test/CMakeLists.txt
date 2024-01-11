@@ -22,6 +22,10 @@ target_link_libraries(test_unit_stock  Heffte)
 add_test(unit_tests_stock  test_unit_stock)
 set_tests_properties(unit_tests_stock PROPERTIES RUN_SERIAL ${Heffte_SEQUENTIAL_TESTING})
 
+if (NOT Heffte_ENABLE_MPI)
+    return()
+endif()
+
 # test the reshape methods
 add_executable(test_reshape3d test_reshape3d.cpp)
 target_link_libraries(test_reshape3d  Heffte)

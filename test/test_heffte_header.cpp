@@ -28,6 +28,8 @@ int main(int, char**){
      * It also does several compile-time checks for class properties.
      */
 
+#ifdef Heffte_ENABLE_MPI
+
     assert_move_and_not_copy<heffte::fft3d<heffte::backend::stock>>();
     assert_move_and_not_copy<heffte::fft3d_r2c<heffte::backend::stock>>();
     #ifdef Heffte_ENABLE_FFTW
@@ -50,6 +52,8 @@ int main(int, char**){
     assert_move_and_not_copy<heffte::fft3d<heffte::backend::onemkl>>();
     assert_move_and_not_copy<heffte::fft3d_r2c<heffte::backend::onemkl>>();
     #endif
+
+#endif
 
     return 0;
 }

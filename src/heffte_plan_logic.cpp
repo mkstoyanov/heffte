@@ -6,6 +6,8 @@
 
 #include "heffte_plan_logic.h"
 
+#ifdef Heffte_ENABLE_MPI
+
 namespace heffte {
 
 /*!
@@ -489,3 +491,5 @@ std::vector<std::array<int, 3>> compute_grids(logic_plan3d<index> const &plan){
 template std::vector<std::array<int, 3>> compute_grids<int>(logic_plan3d<int> const&);
 template std::vector<std::array<int, 3>> compute_grids<long long>(logic_plan3d<long long> const&);
 }
+
+#endif // Heffte_ENABLE_MPI

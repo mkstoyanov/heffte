@@ -10,6 +10,8 @@
 
 #include "heffte_compute_transform.h"
 
+#ifdef Heffte_ENABLE_MPI
+
 namespace heffte {
 
 template<typename location_tag, typename index, typename scalar_type>
@@ -320,3 +322,5 @@ heffte_instantiate_transform(tag::gpu, long long)
 #endif
 
 }
+
+#endif // Heffte_ENABLE_MPI
